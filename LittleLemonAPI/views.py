@@ -8,9 +8,18 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.permissions import IsAuthenticated 
 from rest_framework.response import Response 
 from rest_framework.authentication import TokenAuthentication
+from rest_framework import serializers
+from django.contrib.auth.models import User
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email']
+
 # View to handle GET (list) and POST (create) operations
 class MenuItemView(generics.ListCreateAPIView):
     queryset = MenuItem.objects.all()
+    permission_classes = [IsAuthenticated]
     serializer_class = MenuItemSerializer
 
 # View to handle GET (retrieve), PUT (update), and DELETE operations for a single menu item
@@ -24,3 +33,4 @@ class SingleMenuItemView(generics.RetrieveUpdateDestroyAPIView):
 @authentication_classes([TokenAuthentication]) 
 def msg(request):
     return Response({"message": "This is a protected view"})
+
